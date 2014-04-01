@@ -1,0 +1,115 @@
+<html>
+<head>
+<title>Agile Scala Android Example</title>
+</head>
+<body>
+<div>
+	<h2>Getting started</h2>
+	<p>Hi.</p>
+	<p>Before compiling this example, you have to install <a href="http://www.scala-sbt.org/" target="_blank">SBT</a>, the <a href="https://developer.android.com/sdk/index.html" target="_blank">Android SDK</a> and the <a href="https://github.com/luismfonseca/agile-scala-android" target="_blank">Agile Scala Android</a> SBT plugin.</p>
+	<p>The Agile Scala Android plugin should be installed with a global scope, in order to quickly start making new projects. If you don't wish this feature, you may skip its instalation and just add it as a dependency on each project.</p>
+	<p>If this example doesn't compile within the Activator, you may have to configure an Android target manually in its directory. Available Android targets can be listed by issuing the following command:</p>
+	<pre><code>$ android list targets</code></pre>
+	<p>Then, you can pick up one for this project with :</p>
+	<pre><code>$ android update project -p . -t &lt;target&gt;</code></pre>
+	<p>After that, you can connect your phone or launch an emulator, and run this example by executing :</p>
+	<pre><code>$ sbt android:run</code></pre>
+	<p>More information is avaliable on pfn's <a href="https://github.com/pfn/android-sdk-plugin" target="_blank">Android SDK plugin for SBT</a>.</p>
+</div>
+<div>
+<h2>New (Scala) Project Android</h2>
+<p>This command allows you to create an Android project on the current folder, ready to be compiled and run.</p>
+
+<pre><code>npa &lt;android package&gt; &lt;sdk version&gt;</code></pre>
+
+<p>This very project was created with the following command:</p>
+
+<pre><code>npa pt.pimentelfonseca.activatorexample 19</code></pre>
+
+<p>This created a brand new Android project, targetting the versin 19 of the SDK, with pt.pimentelfoseca.activatorexample as the main package. We can have a closer look at the following:</p>
+<ul>
+<li>An appropriate folder structure was created, alogn with the required Android files.</li>
+<li><a href="#code/build.sbt" class="shortcut">build.sbt</a>
+    <p>This contains the project configurations and dependencies libraries: scaloid, gson and slick.</p></li>
+<li><a href="#code/project/plugins.sbt" class="shortcut">plugins.sbt</a>
+    <p>This contains the project SBT plugin dependencies libraries: the agile-scala-android and android-sdk-plugin.</p></li>
+<li><a href="#code/src/main/AndroidManifest.xml" class="shortcut">src/main/AndroidManifest.xml</a>
+    <p>A minimalistic manifest file with the specified minimum Sdk version, and application entry point to launch the activity MainActivity.</p></li>
+<li><a href="#code/src/main/scala/pt/pimentelfonseca/activatorexample/ui/MainActivity.scala" class="shortcut">src/(...)/ui/MainActivity.scala</a>
+    <p>This is the activity referenced in the manifest file. It will just load the layout when being created.</p></li>
+<li><a href="#code/.gitignore" class="shortcut">.gitignore</a>
+    <p>This file was also generated to simplify git versioning.</p>
+</ul>
+
+<p>If this sounds familiar to you with the <a href="https://github.com/softprops/np" target="_blank">np SBT plugin</a> - great. This task is remarkably similiar to np's, only for android projects.</p>
+
+<p>After you've created a new project, a full SBT reload is necessary. This allows SBT to load the new build definitions and plugins dependencies. Since this template is already the result of npa, you can already experiment it by doing a <a href="#run" class="shortcut">run</a>.</p>
+
+</div>
+<div>
+	<h2>Creating a new Model</h2>
+	<p>The next logical step after creating a new application is defining the bussiness models that it will work with. For this purpose, there's an auxiliar command that manages this, in a very similiar way that <a href="http://rubyonrails.org" target="_blank">Ruby on Rails</a>. The command is the following:</p>
+	<pre><code>generate &lt;Model Name&gt; &lt;attributes&gt;</code></pre>
+
+	The attributes are a tuple of name with type. For example, the following commands creates a new model called Post, with title, number of views, and date as their attributes.
+	<pre><code>generate Post title:String numberOfViews:Int date:Date</code></pre>
+
+	<p>Please use camel-casing when naming the variables as it will be important for other commands.</p>
+
+	<p>At this point, I want you to open a console at the project root, start SBT, and execute this command yourself. After this, the following file was generated:</p>
+	<p><a href="#code/src/main/scala/pt/pimentelfonseca/activatorexample/models/Post.scala" class="shortcut">src/main/scala/pt/pimentelfonseca/activatorexample/models/Post.scala</a></p>
+
+	<p>This is a simple Scala case class, and you can edit it and expand it further.</p>
+
+	<p>Every generated model will have a database mapping that is automatically generated. This feature will be explained in the next section.</p>
+</div>
+<div>
+	<h2>Database</h2>
+	<p>This feature is still being actively developed and is not production-ready.</p>
+</div>
+<div>
+	<h2>Automatic Android Permission resolution</h2>
+	<p>A basic Android application has no permissions associated with it by defult, meaning it cannot do anything that would adversely impact the user experience or any data on the device. This means to access common resources such as GPS, Camera, Internet, a permission needs to be added to the <a href="#code/src/main/AndroidManifest.xml" class="shortcut">manifest</a>.</p>
+	<p>Usually, only at run time will an error message inform the developer about the missing permission. To solve this problem, the Agile Scala Android plugin analyzes the source code and adds known missing permissions automatically.</p>
+	<p>Let's test this feature now:</p>
+	<ol>
+		<li><p>Open the <a href="#code/src/main/scala/pt/pimentelfonseca/activatorexample/ui/MainActivity.scala" class="shortcut">MainActivity</a>.</p></li>
+		<li>Add to onCreate function the following code:
+			<pre><code>import android.net.wifi.WifiManager
+val wifi = getSystemService(Context.WIFI_SERVICE).asInstanceOf[WifiManager]
+wifi.disconnect()</code></pre></li>
+		<li>Go ahead and <a href="#run" class="shortcut">run</a> the project</li>
+		<li>Open the<a href="#code/src/main/AndroidManifest.xml" class="shortcut">manifest</a> and confirm that the permissions were added.</li>
+	</ol>
+	<p>Internally, this mostly achieved by looking at the application's callgraph and comparing to the results of <a href="http://pscout.csl.toronto.edu">PScout</a>, which contains a mapping between permissions and specific Android's functions.</p>
+	<p>It should be noted that this technique <i>might</i> miss a permission or add some unnecessarily. Before deploying to production the application, the permissions list should be revisited.</p>
+</div>
+<div>
+	<h2>Scaffolding</h2>
+	<p>Scaffold is a command that takes a model, looks at its attributes, and creates the views and controllers needed to implement the List and CRUD (Create, Read, Update, Delete) operations in Android. The concept is similiar in several known web applications frameworks, such as <a href="http://rubyonrails.org" target="_blank">Rails</a> and <a href="http://www.playframework.com" target="_blank">Django</a>.</p>
+	
+	<p>To execute scaffold task in existing model use the command:</p>
+	<p><pre><code>scaffold &lt;Model Name&gt;</code></pre></p>
+	
+	<p>Continuing with our previous example, lets scaffold the model Post:</p>
+	<ol>
+		<li><p>Open the SBT console in the project directory, and type:
+			<pre><code>scaffold Post</code></pre>
+		</p></li>
+		<li>At this point, we can look at the resources created in the <a href="#code/src/main/res/layout/" class="shortcut">layout</a> folder, and in the <a href="#code/src/main/scala/pt/pimentelfonseca/activatorexample/ui/" class="shortcut">ui</a> folder.</li>
+		<li>At this point, running the project would still open the MainActivity. To change this, open the<a href="#code/src/main/AndroidManifest.xml" class="shortcut">manifest</a> and replace MainActivity with PostMainActivity.</li>
+		<li>Now <a href="#run" class="shortcut">run</a> the project, and experiment.</li>
+	</ol>
+	<p>Here's a quick preview of the generated model's view:</p>
+	<img src="tutorial/scaffold_post_view.png" style="width: 425px">
+	<p>What if you change the model <i>after</i> the scaffold was performed? In this case, you can either edit the source code manually as you would when developing an Android application without assistance, or delete the source code in the ui folder related to the model and scaffold it again.</p>
+	<p>Scaffolding should be a seen as a starting point in an application development and not the final result. The code generated is very human-readable and modular. Sometimes for functional rapid-prototyping, scaffolding a model might just be enough.</p>
+	</ol>
+</div>
+<div>
+	<h2>Wrap up</h2>
+	<p>Thanks for following this tutorial. The basics of using this tool were covered here, for more information, go to the <a href="https://github.com/luismfonseca/agile-scala-android" target="_blank">project</a> website.</p>
+	<p>Feel free to open a issue there for suggestions and bug reporting.</p>
+</div>
+</body>
+</html>
