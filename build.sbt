@@ -25,7 +25,7 @@ libraryDependencies += "org.scaloid" %% "scaloid" % "3.2-8"
 
 libraryDependencies += "com.google.code.gson" % "gson" % "2.2.4"
 
-libraryDependencies += "com.typesafe.slick" %% "slick" % "2.0.1"
+libraryDependencies += "com.typesafe.slick" %% "slick" % "2.0.2"
 
 // Tasks dependecies
 run <<= (run in Android) dependsOn checkPermissions

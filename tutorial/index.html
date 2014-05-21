@@ -65,7 +65,12 @@
 </div>
 <div>
 	<h2>Database</h2>
-	<p>This feature is still being actively developed and is not production-ready.</p>
+	<p>You can request an automagical conversion of your models into a relation SQL database with Slick as the backend. To do this, run the command:</p>
+	<pre><code>migrateDatabase</code></pre>
+	<p>This will compile your project, and use reflection to figure out the models fields. Then it will generate the necessary tables and helper methods to create a database. You can access the database anywhere in your application.</p>
+	<p>For example, to get the list of all Posts you can simply type:</p>
+	<pre><code>App.posts</code></pre>
+	<p>You can extend the tables using the Data Access Object pattern. So in this case, you can go to <a href="#code/src/main/scala/pt/pimentelfonseca/activatorexample/db/dao/Posts.scala" class="shortcut">src/(...)db/dao/Posts.scala</a> and write extra logic for the table.</p>
 </div>
 <div>
 	<h2>Automatic Android Permission resolution</h2>
@@ -79,7 +84,7 @@
 val wifi = getSystemService(Context.WIFI_SERVICE).asInstanceOf[WifiManager]
 wifi.disconnect()</code></pre></li>
 		<li>Go ahead and <a href="#run" class="shortcut">run</a> the project</li>
-		<li>Open the<a href="#code/src/main/AndroidManifest.xml" class="shortcut">manifest</a> and confirm that the permissions were added.</li>
+		<li>Open the <a href="#code/src/main/AndroidManifest.xml" class="shortcut">manifest</a> and confirm that the permissions were added.</li>
 	</ol>
 	<p>Internally, this mostly achieved by looking at the application's callgraph and comparing to the results of <a href="http://pscout.csl.toronto.edu">PScout</a>, which contains a mapping between permissions and specific Android's functions.</p>
 	<p>It should be noted that this technique <i>might</i> miss a permission or add some unnecessarily. Before deploying to production the application, the permissions list should be revisited.</p>
