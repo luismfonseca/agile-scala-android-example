@@ -80,7 +80,8 @@
 	<ol>
 		<li><p>Open the <a href="#code/src/main/scala/pt/pimentelfonseca/activatorexample/ui/MainActivity.scala" class="shortcut">MainActivity</a>.</p></li>
 		<li>Add to onCreate function the following code:
-			<pre><code>import android.net.wifi.WifiManager
+			<pre><code>import android.content.Context
+import android.net.wifi.WifiManager
 val wifi = getSystemService(Context.WIFI_SERVICE).asInstanceOf[WifiManager]
 wifi.disconnect()</code></pre></li>
 		<li>Go ahead and <a href="#run" class="shortcut">run</a> the project</li>
